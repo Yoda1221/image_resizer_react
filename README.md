@@ -1,1 +1,4 @@
-# image_resizer_react
+# Image Resizer React JS
+### 2022. 10. 05.
+
+

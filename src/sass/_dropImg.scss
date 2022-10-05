@@ -1,0 +1,51 @@
+.dndArea {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    border-radius: 5px;
+    position: relative;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    input {
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+    &:hover, .dragover {
+        opacity: 0.6;
+    }
+
+    &.active {
+        border: 1px solid #0dcaf0 !important;
+    }
+    
+    header { 
+        position: absolute;
+        bottom: 25%;
+        font-size: 1.1rem; font-weight: 300; 
+    }
+    
+    span {
+        position: absolute;
+        font-size: 0.9rem;
+        font-weight: 300;
+        bottom: 20%;
+    }
+    
+    img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+}
