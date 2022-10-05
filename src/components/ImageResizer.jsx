@@ -1,20 +1,20 @@
-import React from 'react'
-import { useState } from 'react'
 import dummyImg from '../assets/uploadImage.jpeg'
+import React, { useState, useEffect }   from 'react'
 import { Alert, Button, Card, Col, Container, Form, Row }  from 'react-bootstrap'
-import { useEffect } from 'react'
 
 const ImageResizer = () => {
     
     const [ file, setFile ]         = useState('')
     const [ error, setError ]       = useState('')
-    const [ imgTrue, setImgTrue ]   = useState(false)
-    const [ image, setImage ]       = useState(dummyImg)
+    const [ imgName, setImgName ]   = useState("")
+    const [ imgExt, setImgExt ]     = useState("")
     const [ imgWidth, setWidth ]    = useState('')
     const [ imgHeight, setHeight ]  = useState('')
+    const [ imgTrue, setImgTrue ]   = useState(false)
+    const [ image, setImage ]       = useState(dummyImg)
     const acceptedImgTypes      = ['image/gif', 'image/jpeg', 'image/png']
 
-    const onFileDrop =(e) => {
+    const onFileDrop = async (e) => {
         e.preventDefault()
         const newFile = e?.target?.files[0]
         if (newFile) {
@@ -23,7 +23,9 @@ const ImageResizer = () => {
                 return
             }
 
-            const image = new Image()
+            const imgExt    = newFile.name.split('.').pop()
+            const imgName   = newFile.name.substr(0, newFile.name.lastIndexOf('.'))
+            const image     = new Image()
             image.src = URL.createObjectURL(newFile)
             image.onload = function () {
                 setWidth(this.width)
@@ -32,15 +34,25 @@ const ImageResizer = () => {
 
             setFile(newFile)
             setImgTrue(true)
+            setImgExt(imgExt)
+            setImgName(imgName)
             setImage(URL.createObjectURL(newFile))
         }
     }
     
+    const handleName    = (e) => setImgName(e.target.value)
     const handleWidth   = (e) => setWidth(e.target.value)
     const handleHeight  = (e) => setHeight(e.target.value)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        Object.defineProperty(file, 'name', {
+            writable: true,
+            value: `${imgName}.${imgExt}`
+        })
+        console.log('FILE ', file)
+        setImgExt('')
+        setImgName('')
     }
 
     useEffect(() => {
@@ -53,6 +65,17 @@ const ImageResizer = () => {
     ? ( <>
             <Card.Body>
                 <Form.Group className="mb-3" controlId="recipeName">
+                    <Form.Label>Image name</Form.Label>
+                    <Form.Control 
+                        size="sm" 
+                        type="text" 
+                        name="imgName"
+                        value={imgName}
+                        placeholder="exampleImg" 
+                        onChange={handleName}
+                    />
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="recipeName">
                     <Form.Label>Image width</Form.Label>
                     <Form.Control 
                         size="sm" 
@@ -64,6 +87,12 @@ const ImageResizer = () => {
                         required
                     />
                 </Form.Group>
+                <Form.Check 
+                    type="checkbox"
+                    id="autoResizing"
+                    className='my-3'
+                    label="Auto resizing height property"
+                />
                 <Form.Group className="mb-3" controlId="recipeName">
                     <Form.Label>Image height</Form.Label>
                     <Form.Control 
@@ -91,12 +120,11 @@ const ImageResizer = () => {
                 { file.name }
             </Card.Footer>
         </>
-     ) : (
+    ) : (
         <div className='text-center py-3'>Vaiting for drop image</div>
-     ) 
+    ) 
 
     return (
-
         <>
             { error && <Alert variant='warning' className="text-center" >{ error }</Alert> }
                 <header className='mt-5 text-center'><h1>Image Resizer</h1></header>
